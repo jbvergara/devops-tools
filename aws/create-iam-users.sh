@@ -33,8 +33,9 @@ set_aws_credentials "$ACCESS_KEY" "$SECRET_ACCESS_KEY" "$REGION" "$SESSION_TOKEN
 # shellcheck disable=SC2006
 for i in `seq 1 "$NUMBER_USERS"`
 do
-    aws iam create-user --user-name "user-$i" --permissions-boundary "$POLICY_ARN"
+    aws iam create-user --user-name "user-$i"
     aws iam create-login-profile --user-name "user-$i" --password "rAnDomPass-$i" --password-reset-required
+    aws iam attach-user-policy --user-name "user-$i" --policy-arn "$POLICY_ARN"
     echo "https://$(aws sts get-caller-identity | jq -r '.Account').signin.aws.amazon.com/console"
     echo "Password: rAnDomPass-$i"
     aws iam create-access-key --user-name "user-$i"
